@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل الدخول | مصنع الصندل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-body">
+
+<div class="login-wrapper">
+  <div class="login-brand">
+    <div class="brand-icon" id="loginLogo">🏭</div>
+    <h1 id="loginFactoryName">مصنع الصندل</h1>
+    <p>نظام المرتبات والإدارة المالية</p>
+  </div>
+
+  <form id="loginForm" class="login-card">
+    <h2>تسجيل الدخول</h2>
+    <p class="muted">أدخل بياناتك للوصول للنظام</p>
+
+    <label class="field">
+      <span>البريد الإلكتروني</span>
+      <input type="email" id="email" required autocomplete="email" placeholder="example@factory.com">
+    </label>
+
+    <label class="field">
+      <span>كلمة المرور</span>
+      <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••">
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+      🔐 دخول
+    </button>
+
+    <div id="loginMsg" class="login-msg"></div>
+  </form>
+
+  <p class="login-footer">© 2026 مصنع الصندل — جميع الحقوق محفوظة</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script>
+  // ============================================
+  // ✅ تحميل الشعار واسم المصنع في صفحة الدخول
+  // ============================================
+  (async function loadLoginBrand() {
+    try {
+      console.log('🎨 Loading login brand...');
+      
+      const { data, error } = await sb.from('system_settings').select('key, value');
+      
+      if (error) {
+        console.warn('Could not load settings:', error);
+        return;
+      }
+      
+      const settings = {};
+      (data || []).forEach(r => { settings[r.key] = r.value; });
+      
+      const logoUrl = (settings.factory_logo_url || '').trim();
+      const factoryName = (settings.factory_name || 'مصنع الصندل').trim();
+      
+      console.log('📸 Logo URL:', logoUrl || '(فارغ)');
+      console.log('🏭 Factory Name:', factoryName);
+      
+      // ✅ حساب المسار الكامل إذا كان رابطاً نسبياً
+      let fullLogoUrl = logoUrl;
+      if (logoUrl && !logoUrl.startsWith('http') && !logoUrl.startsWith('data:')) {
+        const basePath = window.location.pathname.replace(/\/[^\/]*$/, '');
+        fullLogoUrl = basePath + '/' + logoUrl.replace(/^\//, '');
+      }
+      
+      // ✅ الشعار
+      const logoEl = document.getElementById('loginLogo');
+      if (logoEl && fullLogoUrl) {
+        logoEl.innerHTML = `<img src="${fullLogoUrl}" alt="logo" 
+          style="max-width:100px;max-height:100px;width:100px;height:100px;object-fit:contain;display:block;margin:0 auto;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))"
+          onerror="this.onerror=null; this.parentElement.innerHTML='🏭'; this.parentElement.style.fontSize='72px';">`;
+        logoEl.style.fontSize = '0';
+      }
+      
+      // ✅ اسم المصنع
+      const nameEl = document.getElementById('loginFactoryName');
+      if (nameEl) nameEl.textContent = factoryName;
+      
+      // ✅ عنوان التبويب
+      document.title = `تسجيل الدخول | ${factoryName}`;
+      
+      // ✅ أيقونة التبويب
+      if (fullLogoUrl) {
+        let favicon = document.querySelector('link[rel="icon"]');
+        if (!favicon) {
+          favicon = document.createElement('link');
+          favicon.rel = 'icon';
+          document.head.appendChild(favicon);
+        }
+        favicon.href = fullLogoUrl;
+      }
+      
+      console.log('✅ Login brand loaded');
+      
+    } catch (err) {
+      console.warn('Could not load brand:', err);
+    }
+  })();
+  
+  // ============================================
+  // تسجيل الدخول
+  // ============================================
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const msg = document.getElementById('loginMsg');
+    
+    btn.disabled = true; 
+    btn.textContent = '⏳ جاري الدخول...';
+    msg.textContent = '';
+    
+    const { error } = await sb.auth.signInWithPassword({
+      email: document.getElementById('email').value.trim(),
+      password: document.getElementById('password').value
+    });
+    
+    if (error) {
+      msg.textContent = '❌ ' + (error.message || 'فشل تسجيل الدخول');
+      msg.style.color = '#dc2626';
+      btn.disabled = false; 
+      btn.textContent = '🔐 دخول';
+    } else {
+      window.location.href = 'index.html';
+    }
+  });
+</script>
+</body>
+</html>

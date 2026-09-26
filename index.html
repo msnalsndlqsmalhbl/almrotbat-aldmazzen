@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصنع الصندل — نظام المرتبات</title>
+<link rel="icon" id="dynamicFavicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏭</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="icon" id="sidebarLogo">🏭</span>
+      <div>
+        <div class="title" id="sidebarFactoryName">مصنع الصندل</div>
+        <div class="subtitle">نظام المرتبات</div>
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar" id="userAvatar">؟</div>
+      <div class="info">
+        <div class="name" id="userName">جاري التحميل...</div>
+        <div class="role" id="userRole">—</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav">
+      <!-- الرئيسية -->
+      <div class="nav-item active" data-page="dashboard">
+        <span class="ico">🏠</span> الرئيسية
+      </div>
+
+      <!-- العمل اليومي -->
+      <div style="font-size:11px;color:var(--text-3);font-weight:900;padding:12px 18px 6px;letter-spacing:0.5px">⚡ العمل اليومي</div>
+      <div class="nav-item" data-page="employees">
+        <span class="ico">👥</span> الموظفون
+      </div>
+      <div class="nav-item" data-page="attendance">
+        <span class="ico">📅</span> الحضور والغياب
+      </div>
+      <div class="nav-item" data-page="attendance-report">
+        <span class="ico">📋</span> كشوف الحضور الرسمية
+      </div>
+      <div class="nav-item" data-page="warnings">
+        <span class="ico">🚨</span> الإنذارات
+      </div>
+
+      <!-- المالية -->
+      <div style="font-size:11px;color:var(--text-3);font-weight:900;padding:12px 18px 6px;letter-spacing:0.5px">💰 المالية</div>
+      <div class="nav-item" data-page="payroll">
+        <span class="ico">💵</span> الرواتب
+      </div>
+      <div class="nav-item" data-page="loans">
+        <span class="ico">💳</span> السلف
+      </div>
+      <div class="nav-item" data-page="treasuries">
+        <span class="ico">🏦</span> الخزائن
+      </div>
+
+      <!-- البنود -->
+      <div style="font-size:11px;color:var(--text-3);font-weight:900;padding:12px 18px 6px;letter-spacing:0.5px">📋 البنود</div>
+      <div class="nav-item" data-page="earnings">
+        <span class="ico">➕</span> الاستحقاقات
+      </div>
+      <div class="nav-item" data-page="deductions">
+        <span class="ico">➖</span> الاستقطاعات
+      </div>
+
+      <!-- المراجعة -->
+      <div style="font-size:11px;color:var(--text-3);font-weight:900;padding:12px 18px 6px;letter-spacing:0.5px">📊 المراجعة</div>
+      <div class="nav-item" data-page="reports">
+        <span class="ico">📊</span> التقارير
+      </div>
+      <div class="nav-item" data-page="journal">
+        <span class="ico">📒</span> القيود اليومية
+      </div>
+      <div class="nav-item" data-page="notifications">
+        <span class="ico">🔔</span> الإشعارات
+      </div>
+      <div class="nav-item" data-page="audit">
+        <span class="ico">📝</span> سجل العمليات
+      </div>
+
+      <!-- الإدارة -->
+      <div style="font-size:11px;color:var(--text-3);font-weight:900;padding:12px 18px 6px;letter-spacing:0.5px">⚙️ الإدارة</div>
+      <div class="nav-item" data-page="departments">
+        <span class="ico">🏢</span> الأقسام
+      </div>
+      <div class="nav-item" data-page="terminations">
+        <span class="ico">🚪</span> ترك العمل
+      </div>
+      <div class="nav-item" data-page="users">
+        <span class="ico">👤</span> المستخدمون
+      </div>
+      <div class="nav-item" data-page="settings">
+        <span class="ico">⚙️</span> الإعدادات
+      </div>
+
+      <div class="nav-item" id="logoutBtn" style="margin-top:14px;color:var(--danger);border-top:1px solid var(--border);padding-top:16px">
+        <span class="ico">🚪</span> تسجيل الخروج
+      </div>
+    </nav>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="القائمة">☰</button>
+      <div class="topbar-search">
+        <span>🔎</span>
+        <input type="search" id="globalSearch" placeholder="بحث سريع في النظام...">
+        <span class="kbd">Ctrl+K</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-icon" id="notifBtn" title="الإشعارات" style="position:relative">
+          🔔
+          <span id="notifBadge" style="display:none;position:absolute;top:-4px;left:-4px;background:var(--danger);color:#fff;font-size:10px;font-weight:900;padding:2px 6px;border-radius:999px;min-width:18px">0</span>
+        </button>
+        <button class="btn btn-ghost btn-icon" id="themeBtn" title="تبديل الوضع">🌙</button>
+      </div>
+    </header>
+
+    <div class="page" id="pageContent">
+      <!-- محتوى الصفحات ديناميكي -->
+    </div>
+  </main>
+</div>
+
+<div id="toast-container"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script src="reports.js"></script>
+<script src="attendance-report.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
